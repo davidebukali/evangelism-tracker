@@ -2,17 +2,12 @@ import InfiniteList from '@/app/components/InfiniteList';
 import useContactList from '@/app/hooks/useContactList';
 import { spacing } from '@/assets/styles/theme';
 import { Contact } from '@/types/models';
-import { useEffect } from 'react';
 import { Avatar, List } from 'react-native-paper';
 
 export default function Index() {
   const { data, isLoading, hasMore, error, loadMore, retry } = useContactList({
     initialLimit: 20,
   });
-
-  useEffect(() => {
-    loadMore();
-  }, [loadMore]);
 
   const renderContacts = (item: Contact) => (
     <List.Item
