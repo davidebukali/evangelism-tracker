@@ -150,7 +150,7 @@ export const typography: Record<string, TextStyle> = {
 export const commonStyles: Record<string, ViewStyle> = {
   container: {
     flex: 1,
-    padding: spacing.md,
+    padding: spacing.xs,
     backgroundColor: colors.background,
   },
   surface: {

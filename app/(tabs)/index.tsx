@@ -1,7 +1,9 @@
-import useContactList from '@/app/hooks/useContactList';
-import { spacing } from '@/assets/styles/theme';
+import { commonStyles, spacing } from '@/assets/styles/theme';
+import AnimatedButton from '@/components/AnimatedButton';
 import InfiniteList from '@/components/InfiniteList';
+import useContactList from '@/hooks/useContactList';
 import { Contact } from '@/types/models';
+import { View } from 'react-native';
 import { Avatar, List } from 'react-native-paper';
 
 export default function Index() {
@@ -26,18 +28,23 @@ export default function Index() {
       right={(props) => <List.Icon {...props} icon="chevron-right" />}
       containerStyle={{ marginLeft: spacing.sm }}
     />
+
   );
 
   return (
-    <InfiniteList
-      data={data}
-      renderItem={renderContacts}
-      onLoadMore={loadMore}
-      isLoading={isLoading}
-      hasMore={hasMore}
-      error={error}
-      onRetry={retry}
-      emptyText="No contacts to display"
-    />
+    <View style={commonStyles.container}>
+      <InfiniteList
+        style={{ flex: 1 }}
+        data={data}
+        renderItem={renderContacts}
+        onLoadMore={loadMore}
+        isLoading={isLoading}
+        hasMore={hasMore}
+        error={error}
+        onRetry={retry}
+        emptyText="No contacts to display"
+      />
+      <AnimatedButton label="Add contact" onPress={() => {}} />
+    </View>
   );
 }
