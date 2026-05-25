@@ -1,6 +1,6 @@
-import InfiniteList from '@/app/components/InfiniteList';
 import useContactList from '@/app/hooks/useContactList';
 import { spacing } from '@/assets/styles/theme';
+import InfiniteList from '@/components/InfiniteList';
 import { Contact } from '@/types/models';
 import { Avatar, List } from 'react-native-paper';
 
