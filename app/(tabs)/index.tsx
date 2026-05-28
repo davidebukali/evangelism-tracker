@@ -2,7 +2,8 @@ import { commonStyles } from '@/assets/styles/theme';
 import AnimatedButton from '@/components/AnimatedButton';
 import InfiniteList from '@/components/InfiniteList';
 import useContactList from '@/hooks/useContactList';
-import { Contact } from '@/types/models';
+import { PhoneContact } from '@/types/models';
+import { router } from 'expo-router';
 import { View } from 'react-native';
 import { Avatar, List } from 'react-native-paper';
 
@@ -11,7 +12,7 @@ export default function Index() {
     initialLimit: 20,
   });
 
-  const renderContacts = (item: Contact) => (
+  const renderContacts = (item: PhoneContact) => (
     <List.Item
       title={item.name}
       description={item.phone}
@@ -43,7 +44,9 @@ export default function Index() {
         onRetry={retry}
         emptyText="No contacts to display"
       />
-      <AnimatedButton label="Add contact" onPress={() => {}} />
+      <AnimatedButton label="Add contact" onPress={() => {
+        router.navigate("/contacts/CreateContact")
+      }} />
     </View>
   );
 }
