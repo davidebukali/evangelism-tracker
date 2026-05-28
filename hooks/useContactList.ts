@@ -1,4 +1,5 @@
-import { Contact } from '@/types/models';
+import { getContactsModule } from '@/lib/contacts';
+import { PhoneContact } from '@/types/models';
 import { useCallback, useState } from 'react';
 
 interface UseContactListOptions {
@@ -6,7 +7,7 @@ interface UseContactListOptions {
 }
 
 interface UseContactListResponse {
-  data: Contact[];
+  data: PhoneContact[];
   isLoading: boolean;
   hasMore: boolean;
   error: string | null;
@@ -14,65 +15,67 @@ interface UseContactListResponse {
   retry: () => Promise<void>;
 }
 
+const NATIVE_MODULE_MESSAGE =
+  'Contacts native module is missing. Rebuild the app with: npx expo run:android';
+
 export default function useContactList({
   initialLimit = 20,
 }: UseContactListOptions): UseContactListResponse {
-  const [data, setData] = useState<Contact[]>([]);
-  const [page, setPage] = useState(1);
+  const [data, setData] = useState<PhoneContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+  const loadMore = useCallback(
+    async (reset = false) => {
+      if (isLoading || (!reset && !hasMore)) return;
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const newItems: Contact[] = [
-        { id: 1, name: 'John Doe', phone: '0712345678', photo: 'https://picsum.photos/id/237/200' },
-        { id: 2, name: 'Jane Doe', phone: '1234567890', photo: null },
-        { id: 3, name: 'John Smith', phone: '1234567890', photo: null },
-        { id: 4, name: 'Jane Smith', phone: '1234567890', photo: null },
-        { id: 5, name: 'John Doe', phone: '1234567890', photo: null },
-        { id: 6, name: 'Jane Doe', phone: '1234567890', photo: null },
-      ];
-      setData((prev) => [...prev, ...newItems]);
-      setHasMore(newItems.length === initialLimit);
-      setPage((prev) => prev + 1);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, hasMore, initialLimit]);
+      try {
+        const Contacts = await getContactsModule();
+        const fields = [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers] as const;
+
+        const { status } = await Contacts.requestPermissionsAsync();
+        if (status !== 'granted') {
+          setError('Contacts permission is required');
+          return;
+        }
+
+        const offset = reset ? 0 : data.length;
+        const { data: newBatch } = await Contacts.getContactsAsync({
+          fields: [...fields],
+          pageSize: initialLimit,
+          pageOffset: offset,
+        });
+
+        const newItems: PhoneContact[] = newBatch.map((contact) => ({
+          id: contact.id ?? '',
+          name: contact.name,
+          phone: contact.phoneNumbers?.[0]?.number ?? '',
+          photo: contact.image?.uri ?? null,
+        }));
+
+        setData((prev) => (reset ? newItems : [...prev, ...newItems]));
+        setHasMore(newItems.length === initialLimit);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'An error occurred';
+        setError(
+          message.includes('ExpoContacts') ? NATIVE_MODULE_MESSAGE : message
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [data.length, hasMore, initialLimit, isLoading]
+  );
 
   const retry = useCallback(async () => {
-    setPage(1);
-    setData([]);
     setHasMore(true);
     setError(null);
-    setIsLoading(true);
-
-    try {
-      const newItems = [
-        { id: 1, name: 'John Doe', phone: '1234567890', photo: 'https://picsum.photos/200' }, 
-        { id: 2, name: 'Jane Doe', phone: '1234567890', photo: null },
-        { id: 3, name: 'John Smith', phone: '1234567890', photo: null },
-        { id: 4, name: 'Jane Smith', phone: '1234567890', photo: null },
-        { id: 5, name: 'John Doe', phone: '1234567890', photo: null },
-        { id: 6, name: 'Jane Doe', phone: '1234567890', photo: null },
-      ];
-      setData(newItems);
-      setHasMore(newItems.length === initialLimit);
-      setPage(2);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [initialLimit]);
+    await loadMore(true);
+  }, [loadMore]);
 
   return {
     data,
@@ -80,6 +83,6 @@ export default function useContactList({
     hasMore,
     error,
     loadMore,
-    retry
+    retry,
   };
 }
