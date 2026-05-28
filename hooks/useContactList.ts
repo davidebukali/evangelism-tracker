@@ -31,7 +31,7 @@ export default function useContactList({
 
     try {
       const newItems: Contact[] = [
-        { id: 1, name: 'John Doe', phone: '0712345678', photo: 'https://picsum.photos/200' },
+        { id: 1, name: 'John Doe', phone: '0712345678', photo: 'https://picsum.photos/id/237/200' },
         { id: 2, name: 'Jane Doe', phone: '1234567890', photo: null },
         { id: 3, name: 'John Smith', phone: '1234567890', photo: null },
         { id: 4, name: 'Jane Smith', phone: '1234567890', photo: null },

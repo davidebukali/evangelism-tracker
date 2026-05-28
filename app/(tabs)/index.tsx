@@ -1,4 +1,4 @@
-import { commonStyles, spacing } from '@/assets/styles/theme';
+import { commonStyles } from '@/assets/styles/theme';
 import AnimatedButton from '@/components/AnimatedButton';
 import InfiniteList from '@/components/InfiniteList';
 import useContactList from '@/hooks/useContactList';
@@ -26,7 +26,6 @@ export default function Index() {
         )
       }
       right={(props) => <List.Icon {...props} icon="chevron-right" />}
-      containerStyle={{ marginLeft: spacing.sm }}
     />
 
   );
