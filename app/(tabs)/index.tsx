@@ -3,7 +3,8 @@ import AnimatedButton from '@/components/AnimatedButton';
 import InfiniteList from '@/components/InfiniteList';
 import useContactList from '@/hooks/useContactList';
 import { PhoneContact } from '@/types/models';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { View } from 'react-native';
 import { Avatar, List } from 'react-native-paper';
 
@@ -11,6 +12,13 @@ export default function Index() {
   const { data, isLoading, hasMore, error, loadMore, retry } = useContactList({
     initialLimit: 20,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      // Trigger a refresh whenever the screen comes into focus
+      retry();
+    }, [retry])
+  );
 
   const renderContacts = (item: PhoneContact) => (
     <List.Item
