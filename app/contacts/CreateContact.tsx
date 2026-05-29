@@ -1,8 +1,11 @@
 import { colors, commonStyles, spacing } from '@/assets/styles/theme';
-import { Stack } from 'expo-router';
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { FormInput } from '@/components/FormInput';
+import * as Contacts from 'expo-contacts';
+import { Stack, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
 interface CreateContactForm {
   firstName: string;
@@ -12,7 +15,10 @@ interface CreateContactForm {
 }
 
 export default function CreateContact() {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { control, handleSubmit, formState: { errors } } = useForm<CreateContactForm>({
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -21,89 +27,97 @@ export default function CreateContact() {
     },
   });
 
-  const onSubmit: SubmitHandler<CreateContactForm> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<CreateContactForm> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const { status } = await Contacts.requestPermissionsAsync();
+      
+      if (status === 'granted') {
+        const contact: Contacts.Contact = {
+          contactType: Contacts.ContactTypes.Person,
+          name: `${data.firstName} ${data.lastName}`.trim(),
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phoneNumbers: [{
+            label: 'mobile',
+            number: data.phone,
+          }],
+          note: data.notes,
+        };
+
+        const contactId = await Contacts.addContactAsync(contact);
+        
+        if (contactId) {
+          Alert.alert('Success', 'Contact saved to your device!', [
+            { text: 'OK', onPress: () => router.back() }
+          ]);
+        } else {
+          Alert.alert('Error', 'Failed to save contact.');
+        }
+      } else {
+        Alert.alert(
+          'Permission Denied', 
+          'Permission to access contacts is required to save them to your device. Please enable it in your system settings.'
+        );
+      }
+    } catch (error) {
+      console.error('Error saving contact:', error);
+      Alert.alert('Error', 'An unexpected error occurred while saving the contact.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <ScrollView style={commonStyles.container} contentContainerStyle={styles.scrollContent}>
       <Stack.Screen options={{ title: "Add Contact" }} />
       <View style={styles.formContainer}>
-        <Controller
-          control={control}
+        <FormInput
           name="firstName"
+          control={control}
+          label="First Name"
           rules={{ required: "First name is required" }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              label="First Name"
-              mode="outlined"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={!!errors.firstName}
-              style={styles.input}
-            />
-          )}
+          error={errors.firstName?.message}
+          disabled={isSubmitting}
         />
-        {errors.firstName && <Text style={styles.errorText}>{errors.firstName.message}</Text>}
 
-        <Controller
-          control={control}
+        <FormInput
           name="lastName"
+          control={control}
+          label="Last Name"
           rules={{ required: "Last name is required" }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              label="Last Name"
-              mode="outlined"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
+          error={errors.lastName?.message}
+          disabled={isSubmitting}
         />
 
-        <Controller
-          control={control}
+        <FormInput
           name="phone"
+          control={control}
+          label="Phone"
           rules={{ required: "Phone number is required" }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              label="Phone"
-              mode="outlined"
-              keyboardType="phone-pad"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
+          error={errors.phone?.message}
+          keyboardType="phone-pad"
+          disabled={isSubmitting}
         />
 
-        <Controller
-          control={control}
+        <FormInput
           name="notes"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              label="Notes"
-              mode="outlined"
-              multiline
-              numberOfLines={8}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
+          control={control}
+          label="Notes"
+          multiline
+          numberOfLines={8}
+          disabled={isSubmitting}
         />
 
         <Button 
           mode="contained" 
           onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+          disabled={isSubmitting}
           style={styles.button}
           contentStyle={styles.buttonContent}
         >
-          Save Contact
+          {isSubmitting ? 'Saving...' : 'Save Contact'}
         </Button>
       </View>
     </ScrollView>
@@ -117,9 +131,6 @@ const styles = StyleSheet.create({
   formContainer: {
     gap: spacing.md,
   },
-  input: {
-    backgroundColor: 'transparent',
-  },
   button: {
     marginTop: spacing.lg,
     borderRadius: 8,
@@ -127,11 +138,5 @@ const styles = StyleSheet.create({
   buttonContent: {
     paddingVertical: spacing.xs,
   },
-  errorText: {
-    color: colors.error,
-    fontSize: 12,
-    marginTop: -spacing.sm,
-    marginLeft: spacing.xs,
-  }
 });
 
