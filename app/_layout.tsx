@@ -10,6 +10,10 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="contacts" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="call-logs"
+            options={{ headerShown: false, presentation: 'fullScreenModal' }}
+          />
         </Stack>
       </SQLiteProvider>
     </PaperProvider>
