@@ -2,7 +2,6 @@ import { commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { CallLog } from 'react-native-call-log';
 import { List, Text } from 'react-native-paper';
@@ -29,12 +28,6 @@ export default function ContactCallLogsScreen() {
   const contactName = Array.isArray(name) ? name[0] : name;
   const selectedPhoneNumber = Array.isArray(phoneNumber) ? phoneNumber[0] : phoneNumber;
   const { data, isLoading, error, refetch } = useContactCallLogs(selectedPhoneNumber);
-
-  useEffect(() => {
-    if (contactName) {
-      navigation.setOptions({ title: contactName });
-    }
-  }, [contactName, navigation]);
 
   const renderCallLog = (item: CallLog) => (
     <List.Item
