@@ -4,21 +4,27 @@ import InfiniteList from '@/components/InfiniteList';
 import useContactList from '@/hooks/useContactList';
 import { PhoneContact } from '@/types/models';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { Avatar, List } from 'react-native-paper';
+import { Avatar, List, Searchbar } from 'react-native-paper';
 
 export default function Index() {
   const { data, isLoading, hasMore, error, loadMore, retry } = useContactList({
     initialLimit: 20,
   });
+  const [query, setQuery] = useState('');
 
   useFocusEffect(
     useCallback(() => {
-      // Trigger a refresh whenever the screen comes into focus
       retry();
     }, [retry])
   );
+
+  const filteredData = useMemo(() => {
+    if (!query.trim()) return data;
+    const lower = query.toLowerCase();
+    return data.filter((c) => c.name?.toLowerCase().includes(lower));
+  }, [data, query]);
 
   const renderContacts = (item: PhoneContact) => (
     <List.Item
@@ -26,10 +32,7 @@ export default function Index() {
       description={item.phone}
       left={(props) => 
         item.photo ? (
-          <Avatar.Image
-            size={40}
-            source={{ uri: item.photo as string }}
-          />
+          <Avatar.Image size={40} source={{ uri: item.photo as string }} />
         ) : (
           <List.Icon {...props} icon="account" />
         )
@@ -37,21 +40,27 @@ export default function Index() {
       right={(props) => <List.Icon {...props} icon="chevron-right" />}
       onPress={() => router.push(`/contacts/edit/${item.id}`)}
     />
-
   );
 
   return (
     <View style={commonStyles.container}>
       <InfiniteList
         style={{ flex: 1 }}
-        data={data}
+        data={filteredData}
         renderItem={renderContacts}
         onLoadMore={loadMore}
         isLoading={isLoading}
         hasMore={hasMore}
         error={error}
         onRetry={retry}
-        emptyText="No contacts to display"
+        emptyText={query ? 'No contacts match your search' : 'No contacts to display'}
+        ListHeaderComponent={
+          <Searchbar
+            placeholder="Search contacts..."
+            onChangeText={setQuery}
+            value={query}
+          />
+        }
       />
       <AnimatedButton label="Add contact" onPress={() => {
         router.navigate("/contacts/CreateContact")
@@ -59,3 +68,4 @@ export default function Index() {
     </View>
   );
 }
+
