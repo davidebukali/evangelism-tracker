@@ -46,7 +46,8 @@
         {
           "contactsPermission": "Allow Evangelism Tracker to access your contacts."
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
