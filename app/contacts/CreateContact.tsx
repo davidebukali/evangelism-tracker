@@ -1,7 +1,7 @@
-import { colors, commonStyles, spacing } from '@/assets/styles/theme';
+import { commonStyles, spacing } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
 import * as Contacts from 'expo-contacts';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
@@ -70,7 +70,6 @@ export default function CreateContact() {
 
   return (
     <ScrollView style={commonStyles.container} contentContainerStyle={styles.scrollContent}>
-      <Stack.Screen options={{ title: "Add Contact" }} />
       <View style={styles.formContainer}>
         <FormInput
           name="firstName"

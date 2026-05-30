@@ -35,6 +35,7 @@ export default function Index() {
         )
       }
       right={(props) => <List.Icon {...props} icon="chevron-right" />}
+      onPress={() => router.push(`/contacts/edit/${item.id}`)}
     />
 
   );
