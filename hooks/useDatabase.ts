@@ -51,8 +51,45 @@ export default function useDatabase() {
     [db]
   );
 
+  const updateContact = useCallback(
+    async (contact: DatabaseContact) => {
+      try {
+        await db.runAsync(
+          `UPDATE contacts SET first_name = ?, last_name = ?, phone = ?, notes = ? WHERE device_contact_id = ?`,
+          [
+            contact.first_name,
+            contact.last_name,
+            contact.phone,
+            contact.notes,
+            contact.device_contact_id,
+          ]
+        );
+      } catch (error) {
+        console.error('Error updating contact in db:', error);
+        throw error;
+      }
+    },
+    [db]
+  );
+
+  const deleteContact = useCallback(
+    async (device_contact_id: string) => {
+      try {
+        await db.runAsync(`DELETE FROM contacts WHERE device_contact_id = ?`, [
+          device_contact_id,
+        ]);
+      } catch (error) {
+        console.error('Error deleting contact from db:', error);
+        throw error;
+      }
+    },
+    [db]
+  );
+
   return {
     addContact,
     getContacts,
+    updateContact,
+    deleteContact,
   };
 }

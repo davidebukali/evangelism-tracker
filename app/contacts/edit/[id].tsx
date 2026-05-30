@@ -1,5 +1,6 @@
 import { commonStyles, spacing } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
+import useDatabase from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -19,6 +20,7 @@ export default function EditContact() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { updateContact, deleteContact } = useDatabase();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<EditContactForm>({
     defaultValues: {
@@ -81,6 +83,14 @@ export default function EditContact() {
 
       await Contacts.updateContactAsync(updatedContact);
 
+      await updateContact({
+        device_contact_id: id,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: data.phone,
+        notes: data.notes,
+      });
+
       Alert.alert('Success', 'Contact updated!', [
         { text: 'OK', onPress: () => router.back() },
       ]);
@@ -104,6 +114,7 @@ export default function EditContact() {
           onPress: async () => {
             try {
               await Contacts.removeContactAsync(id);
+              await deleteContact(id);
               router.back();
             } catch (error) {
               Alert.alert('Error', 'Failed to delete contact.');
