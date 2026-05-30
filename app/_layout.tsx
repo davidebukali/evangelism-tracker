@@ -1,13 +1,17 @@
+import { initializeDatabase } from "@/lib/database";
 import { Stack } from "expo-router";
+import { SQLiteProvider } from 'expo-sqlite';
 import { PaperProvider } from 'react-native-paper';
 
 export default function RootLayout() {
   return (
     <PaperProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="contacts" options={{ headerShown: false }} />
-      </Stack>
+      <SQLiteProvider databaseName="evangelism.db" onInit={initializeDatabase}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="contacts" options={{ headerShown: false }} />
+        </Stack>
+      </SQLiteProvider>
     </PaperProvider>
   );
 }

@@ -1,5 +1,6 @@
 import { commonStyles, spacing } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
+import useDatabase from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -17,6 +18,7 @@ interface CreateContactForm {
 export default function CreateContact() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addContact } = useDatabase();
   
   const { control, handleSubmit, formState: { errors } } = useForm<CreateContactForm>({
     defaultValues: {
@@ -48,6 +50,15 @@ export default function CreateContact() {
         const contactId = await Contacts.addContactAsync(contact);
         
         if (contactId) {
+          // Save to sqlite database
+          await addContact({
+            device_contact_id: contactId,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            phone: data.phone,
+            notes: data.notes,
+          });
+
           Alert.alert('Success', 'Contact saved to your device!', [
             { text: 'OK', onPress: () => router.back() }
           ]);

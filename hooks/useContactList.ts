@@ -1,4 +1,4 @@
-import { getContactsModule } from '@/lib/contacts';
+import useDatabase, { DatabaseContact } from '@/hooks/useDatabase';
 import { PhoneContact } from '@/types/models';
 import { useCallback, useState } from 'react';
 
@@ -15,12 +15,10 @@ interface UseContactListResponse {
   retry: () => Promise<void>;
 }
 
-const NATIVE_MODULE_MESSAGE =
-  'Contacts native module is missing. Rebuild the app with: npx expo run:android';
-
 export default function useContactList({
   initialLimit = 20,
 }: UseContactListOptions): UseContactListResponse {
+  const { getContacts } = useDatabase();
   const [data, setData] = useState<PhoneContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -34,41 +32,28 @@ export default function useContactList({
       setError(null);
 
       try {
-        const Contacts = await getContactsModule();
-        const fields = [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers] as const;
-
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status !== 'granted') {
-          setError('Contacts permission is required');
-          return;
-        }
-
         const offset = reset ? 0 : data.length;
-        const { data: newBatch } = await Contacts.getContactsAsync({
-          fields: [...fields],
-          pageSize: initialLimit,
-          pageOffset: offset,
-        });
+        
+        // Fetch paginated contacts from the local SQLite database
+        const rows = await getContacts(initialLimit, offset);
 
-        const newItems: PhoneContact[] = newBatch.map((contact) => ({
-          id: contact.id ?? '',
-          name: contact.name,
-          phone: contact.phoneNumbers?.[0]?.number ?? '',
-          photo: contact.image?.uri ?? null,
+        const newItems: PhoneContact[] = rows.map((contact: DatabaseContact) => ({
+          id: contact.device_contact_id ?? String(contact.id),
+          name: `${contact.first_name} ${contact.last_name}`.trim(),
+          phone: contact.phone,
+          photo: null, // SQLite doesn't currently store photo URIs
         }));
 
         setData((prev) => (reset ? newItems : [...prev, ...newItems]));
         setHasMore(newItems.length === initialLimit);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
-        setError(
-          message.includes('ExpoContacts') ? NATIVE_MODULE_MESSAGE : message
-        );
+        const message = err instanceof Error ? err.message : 'An error occurred fetching from DB';
+        setError(message);
       } finally {
         setIsLoading(false);
       }
     },
-    [data.length, hasMore, initialLimit, isLoading]
+    [data.length, hasMore, initialLimit, isLoading, getContacts]
   );
 
   const retry = useCallback(async () => {
