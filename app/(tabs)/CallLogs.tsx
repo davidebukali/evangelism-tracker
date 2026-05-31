@@ -7,7 +7,15 @@ import { StyleSheet, View } from 'react-native';
 import { Badge, List } from 'react-native-paper';
 
 export default function CallLogs() {
-  const { data, isLoading, error, refetch } = useCallLogContacts();
+  const {
+    data,
+    isLoading,
+    error,
+    permissionStatus,
+    refetch,
+    openPermissionSettings,
+  } = useCallLogContacts();
+  const needsSettings = permissionStatus === 'never_ask_again';
 
   useFocusEffect(
     useCallback(() => {
@@ -49,7 +57,8 @@ export default function CallLogs() {
         isLoading={isLoading}
         hasMore={false}
         error={error}
-        onRetry={refetch}
+        onRetry={needsSettings ? openPermissionSettings : refetch}
+        retryLabel={needsSettings ? 'Open Settings' : 'Retry'}
         emptyText="No outgoing calls found for saved contacts"
       />
     </View>

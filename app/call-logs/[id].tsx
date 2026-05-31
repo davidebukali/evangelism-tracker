@@ -1,7 +1,7 @@
 import { commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import type { CallLog } from 'react-native-call-log';
 import { List, Text } from 'react-native-paper';
@@ -18,7 +18,6 @@ function formatDuration(duration: number) {
 }
 
 export default function ContactCallLogsScreen() {
-  const navigation = useNavigation();
   const { phoneNumber, name } = useLocalSearchParams<{
     id: string;
     phoneNumber?: string;
@@ -27,7 +26,15 @@ export default function ContactCallLogsScreen() {
 
   const contactName = Array.isArray(name) ? name[0] : name;
   const selectedPhoneNumber = Array.isArray(phoneNumber) ? phoneNumber[0] : phoneNumber;
-  const { data, isLoading, error, refetch } = useContactCallLogs(selectedPhoneNumber);
+  const {
+    data,
+    isLoading,
+    error,
+    permissionStatus,
+    refetch,
+    openPermissionSettings,
+  } = useContactCallLogs(selectedPhoneNumber);
+  const needsSettings = permissionStatus === 'never_ask_again';
 
   const renderCallLog = (item: CallLog) => (
     <List.Item
@@ -47,7 +54,8 @@ export default function ContactCallLogsScreen() {
         isLoading={isLoading}
         hasMore={false}
         error={error}
-        onRetry={refetch}
+        onRetry={needsSettings ? openPermissionSettings : refetch}
+        retryLabel={needsSettings ? 'Open Settings' : 'Retry'}
         emptyText="No outgoing calls found for this contact"
         ListHeaderComponent={
           <View style={styles.header}>

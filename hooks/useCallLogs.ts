@@ -1,6 +1,6 @@
 import useDatabase, { DatabaseContact } from '@/hooks/useDatabase';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Linking, PermissionsAndroid, Platform } from 'react-native';
 import type { CallLog } from 'react-native-call-log';
 
 const RECENT_CALL_LIMIT = 500;
@@ -20,22 +20,60 @@ export interface UseCallLogsResponse<T> {
   data: T[];
   isLoading: boolean;
   error: string | null;
+  permissionStatus: CallLogPermissionStatus;
   refetch: () => Promise<void>;
+  openPermissionSettings: () => Promise<void>;
 }
 
-async function requestCallLogPermission() {
+export type CallLogPermissionStatus =
+  | 'unknown'
+  | 'granted'
+  | 'denied'
+  | 'never_ask_again'
+  | 'unsupported';
+
+async function requestCallLogPermission(): Promise<CallLogPermissionStatus> {
   if (Platform.OS !== 'android') {
-    return false;
+    return 'unsupported';
   }
 
   const permission = PermissionsAndroid.PERMISSIONS.READ_CALL_LOG;
   const hasPermission = await PermissionsAndroid.check(permission);
   if (hasPermission) {
-    return true;
+    return 'granted';
   }
 
-  const status = await PermissionsAndroid.request(permission);
-  return status === PermissionsAndroid.RESULTS.GRANTED;
+  const status = await PermissionsAndroid.request(permission, {
+    title: 'Call log access',
+    message: 'Emmaus uses outgoing call history to show follow-up activity for your saved contacts.',
+    buttonPositive: 'Allow',
+    buttonNegative: 'Not now',
+  });
+
+  if (status === PermissionsAndroid.RESULTS.GRANTED) {
+    return 'granted';
+  }
+
+  if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+    return 'never_ask_again';
+  }
+
+  return 'denied';
+}
+
+async function openPermissionSettings() {
+  await Linking.openSettings();
+}
+
+function callLogPermissionError(status: CallLogPermissionStatus) {
+  switch (status) {
+    case 'unsupported':
+      return 'Call logs are only available on Android';
+    case 'never_ask_again':
+      return 'Call log permission is disabled. Enable it in Android settings to view call history.';
+    default:
+      return 'Call log permission is required';
+  }
 }
 
 function normalizePhoneNumber(phoneNumber?: string | null) {
@@ -95,6 +133,8 @@ export function useCallLogContacts(): UseCallLogsResponse<ContactCallLogSummary>
   const [data, setData] = useState<ContactCallLogSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [permissionStatus, setPermissionStatus] =
+    useState<CallLogPermissionStatus>('unknown');
 
   const refetch = useCallback(async () => {
     if (isRequestInFlight.current) {
@@ -106,14 +146,12 @@ export function useCallLogContacts(): UseCallLogsResponse<ContactCallLogSummary>
     setError(null);
 
     try {
-      const hasPermission = await requestCallLogPermission();
-      if (!hasPermission) {
+      const status = await requestCallLogPermission();
+      setPermissionStatus(status);
+
+      if (status !== 'granted') {
         setData([]);
-        setError(
-          Platform.OS === 'android'
-            ? 'Call log permission is required'
-            : 'Call logs are only available on Android'
-        );
+        setError(callLogPermissionError(status));
         return;
       }
 
@@ -181,7 +219,14 @@ export function useCallLogContacts(): UseCallLogsResponse<ContactCallLogSummary>
     refetch();
   }, [refetch]);
 
-  return { data, isLoading, error, refetch };
+  return {
+    data,
+    isLoading,
+    error,
+    permissionStatus,
+    refetch,
+    openPermissionSettings,
+  };
 }
 
 export function useContactCallLogs(
@@ -191,6 +236,8 @@ export function useContactCallLogs(
   const [data, setData] = useState<CallLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [permissionStatus, setPermissionStatus] =
+    useState<CallLogPermissionStatus>('unknown');
 
   const refetch = useCallback(async () => {
     if (isRequestInFlight.current) {
@@ -208,14 +255,12 @@ export function useContactCallLogs(
     setError(null);
 
     try {
-      const hasPermission = await requestCallLogPermission();
-      if (!hasPermission) {
+      const status = await requestCallLogPermission();
+      setPermissionStatus(status);
+
+      if (status !== 'granted') {
         setData([]);
-        setError(
-          Platform.OS === 'android'
-            ? 'Call log permission is required'
-            : 'Call logs are only available on Android'
-        );
+        setError(callLogPermissionError(status));
         return;
       }
 
@@ -243,5 +288,12 @@ export function useContactCallLogs(
     refetch();
   }, [refetch]);
 
-  return { data, isLoading, error, refetch };
+  return {
+    data,
+    isLoading,
+    error,
+    permissionStatus,
+    refetch,
+    openPermissionSettings,
+  };
 }

@@ -16,6 +16,7 @@ interface InfiniteListProps<T> extends Omit<FlatListProps<T>, 'renderItem' | 'da
   hasMore?: boolean;
   error?: string | null;
   onRetry?: () => void;
+  retryLabel?: string;
   emptyText?: string;
 }
 
@@ -27,6 +28,7 @@ export default function InfiniteList<T extends { id: string | number }>({
   hasMore = true,
   error = null,
   onRetry,
+  retryLabel = 'Retry',
   emptyText,
   ...flatListProps
 }: InfiniteListProps<T>) {
@@ -51,7 +53,7 @@ export default function InfiniteList<T extends { id: string | number }>({
                   style={styles.retryButton}
                   onPress={onRetry}
                 >
-                  Retry
+                  {retryLabel}
                 </Text>
               )}
             </>
