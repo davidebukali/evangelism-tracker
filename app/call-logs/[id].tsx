@@ -2,9 +2,10 @@ import { commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { useCallback } from 'react';
+import { Alert, Linking, StyleSheet, View } from 'react-native';
 import type { CallLog } from 'react-native-call-log';
-import { List, Text } from 'react-native-paper';
+import { Button, List, Text } from 'react-native-paper';
 
 function formatDuration(duration: number) {
   const minutes = Math.floor(duration / 60);
@@ -36,6 +37,19 @@ export default function ContactCallLogsScreen() {
   } = useContactCallLogs(selectedPhoneNumber);
   const needsSettings = permissionStatus === 'never_ask_again';
 
+  const handleCallNow = useCallback(async () => {
+    if (!selectedPhoneNumber) {
+      Alert.alert('Phone number missing', 'This contact does not have a phone number.');
+      return;
+    }
+
+    try {
+      await Linking.openURL(`tel:${selectedPhoneNumber.trim()}`);
+    } catch {
+      Alert.alert('Unable to call', 'This device cannot open the phone dialer.');
+    }
+  }, [selectedPhoneNumber]);
+
   const renderCallLog = (item: CallLog) => (
     <List.Item
       title={item.dateTime}
@@ -65,6 +79,16 @@ export default function ContactCallLogsScreen() {
                 {selectedPhoneNumber}
               </Text>
             ) : null}
+            <Button
+              mode="contained"
+              icon="phone"
+              style={styles.callButton}
+              contentStyle={styles.callButtonContent}
+              disabled={!selectedPhoneNumber}
+              onPress={handleCallNow}
+            >
+              Call Now
+            </Button>
           </View>
         }
       />
@@ -78,5 +102,12 @@ const styles = StyleSheet.create({
   },
   phone: {
     marginTop: spacing.xs,
+  },
+  callButton: {
+    marginTop: spacing.md,
+    alignSelf: 'stretch',
+  },
+  callButtonContent: {
+    height: 48,
   },
 });
