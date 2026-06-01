@@ -1,4 +1,4 @@
-import { commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, commonStyles, spacing } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
 import useDatabase from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
@@ -178,10 +178,10 @@ export default function EditContact() {
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={isSubmitting}
-          style={styles.button}
-          contentStyle={styles.buttonContent}
+          style={buttonStyles.actionButton}
+          contentStyle={buttonStyles.actionButtonContent}
         >
-          {isSubmitting ? 'Saving...' : 'Save Changes'}
+          {isSubmitting ? 'Saving...' : 'Save'}
         </Button>
       </View>
     </ScrollView>
@@ -199,12 +199,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  button: {
-    marginTop: spacing.lg,
-    borderRadius: 8,
-  },
-  buttonContent: {
-    paddingVertical: spacing.xs,
-  },
+  }
 });

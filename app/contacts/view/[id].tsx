@@ -12,6 +12,7 @@ interface ContactDetails {
   name: string;
   phone: string;
   notes: string;
+  created_at: string;
 }
 
 function getInitials(contact: ContactDetails) {
@@ -30,6 +31,7 @@ function mapDatabaseContact(contact: DatabaseContact): ContactDetails {
     name,
     phone: contact.phone,
     notes: contact.notes ?? '',
+    created_at: contact.created_at ?? '',
   };
 }
 
@@ -73,6 +75,7 @@ export default function ViewContact() {
             name: deviceContact.name ?? 'Unnamed contact',
             phone: deviceContact.phoneNumbers?.[0]?.number ?? '',
             notes: deviceContact.note ?? '',
+            created_at: '',
           });
           return;
         }
@@ -162,6 +165,10 @@ export default function ViewContact() {
         <Avatar.Text size={112} label={initials.toUpperCase()} />
         <Text variant="headlineSmall" style={styles.name}>
           {contact.name}
+        </Text>
+        {/* Add reached date, human readable when the contact was saved */}
+        <Text variant="bodyMedium">
+          Reached: {new Date(contact.created_at).toDateString()}
         </Text>
       </View>
 

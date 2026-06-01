@@ -8,6 +8,7 @@ export interface DatabaseContact {
   last_name: string;
   phone: string;
   notes: string;
+  created_at?: string;
 }
 
 export default function useDatabase() {
