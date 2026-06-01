@@ -1,4 +1,4 @@
-import { commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
 import { useLocalSearchParams } from 'expo-router';
@@ -82,8 +82,8 @@ export default function ContactCallLogsScreen() {
             <Button
               mode="contained"
               icon="phone"
-              style={styles.callButton}
-              contentStyle={styles.callButtonContent}
+              style={buttonStyles.actionButton}
+              contentStyle={buttonStyles.actionButtonContent}
               disabled={!selectedPhoneNumber}
               onPress={handleCallNow}
             >
@@ -102,12 +102,6 @@ const styles = StyleSheet.create({
   },
   phone: {
     marginTop: spacing.xs,
-  },
-  callButton: {
-    marginTop: spacing.md,
-    alignSelf: 'stretch',
-  },
-  callButtonContent: {
-    height: 48,
+    marginBottom: spacing.md,
   },
 });
