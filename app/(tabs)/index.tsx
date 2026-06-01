@@ -46,21 +46,23 @@ export default function Index() {
   const displayLoadMore = isSearching ? () => {} : loadMore;
   const displayRetry = isSearching ? () => {} : retry;
 
-  const renderContacts = (item: PhoneContact) => (
-    <List.Item
-      title={item.name}
-      description={item.phone}
-      left={(props) => 
-        item.photo ? (
-          <Avatar.Image size={40} source={{ uri: item.photo as string }} />
-        ) : (
-          <List.Icon {...props} icon="account" />
-        )
-      }
-      right={(props) => <List.Icon {...props} icon="chevron-right" />}
-      onPress={() => router.push(`/contacts/view/${item.id}`)}
-    />
-  );
+  const renderContacts = (item: PhoneContact) => {    
+    const firstInitial = item.name.trim().charAt(0);
+    const lastInitial = item.name.trim().charAt(0);
+    const initials = `${firstInitial}${lastInitial}`.trim();
+    
+    return (  
+      <List.Item
+        title={item.name}
+        description={item.phone}
+        left={(props) => 
+          <Avatar.Text size={40} label={initials.toUpperCase()} />
+        }
+        right={(props) => <List.Icon {...props} icon="chevron-right" />}
+        onPress={() => router.push(`/contacts/view/${item.id}`)}
+      />
+    );
+  }
 
   return (
     <View style={commonStyles.container}>
