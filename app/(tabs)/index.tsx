@@ -23,6 +23,7 @@ export default function Index() {
   });
 
   const [query, setQuery] = useState('');
+  const [isExtended, setIsExtended] = useState(true);
   const debouncedQuery = useDebounce(query, 300);
 
   const { 
@@ -34,6 +35,7 @@ export default function Index() {
   useFocusEffect(
     useCallback(() => {
       retry();
+      setIsExtended(true);
     }, [retry])
   );
 
@@ -84,9 +86,14 @@ export default function Index() {
           />
         }
       />
-      <AnimatedButton label="Add contact" onPress={() => {
-        router.navigate("/contacts/CreateContact")
-      }} />
+      <AnimatedButton 
+        label="Add contact"
+        onPress={() => {
+          setIsExtended((prev) => !prev);
+          router.navigate("/contacts/CreateContact")
+        }} 
+        initialExtended={isExtended}
+      />
     </View>
   );
 }

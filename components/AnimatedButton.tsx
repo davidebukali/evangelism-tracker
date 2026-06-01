@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AnimatedFAB, type AnimatedFABAnimateFrom } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ type AnimatedButtonProps = {
   onPress?: () => void;
   visible?: boolean;
   animateFrom?: AnimatedFABAnimateFrom;
+  initialExtended: boolean;
 };
 
 const AnimatedButton = ({
@@ -17,12 +18,11 @@ const AnimatedButton = ({
   onPress,
   visible = true,
   animateFrom = 'right',
+  initialExtended,
 }: AnimatedButtonProps) => {
   const insets = useSafeAreaInsets();
-  const [extended, setExtended] = useState(false);
 
   const handlePress = () => {
-    setExtended((prev) => !prev);
     onPress?.();
   };
 
@@ -30,7 +30,7 @@ const AnimatedButton = ({
     <AnimatedFAB
       icon={icon}
       label={label}
-      extended={extended}
+      extended={initialExtended}
       visible={visible}
       animateFrom={animateFrom}
       iconMode="static"
