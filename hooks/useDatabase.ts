@@ -51,6 +51,22 @@ export default function useDatabase() {
     [db]
   );
 
+  const getContactByDeviceId = useCallback(
+    async (deviceContactId: string) => {
+      try {
+        const row = await db.getFirstAsync<DatabaseContact>(
+          `SELECT * FROM contacts WHERE device_contact_id = ? LIMIT 1`,
+          [deviceContactId]
+        );
+        return row;
+      } catch (error) {
+        console.error('Error getting contact from db:', error);
+        throw error;
+      }
+    },
+    [db]
+  );
+
   const updateContact = useCallback(
     async (contact: DatabaseContact) => {
       try {
@@ -89,6 +105,7 @@ export default function useDatabase() {
   return {
     addContact,
     getContacts,
+    getContactByDeviceId,
     updateContact,
     deleteContact,
   };

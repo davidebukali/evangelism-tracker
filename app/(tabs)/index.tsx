@@ -58,7 +58,7 @@ export default function Index() {
         )
       }
       right={(props) => <List.Icon {...props} icon="chevron-right" />}
-      onPress={() => router.push(`/contacts/edit/${item.id}`)}
+      onPress={() => router.push(`/contacts/view/${item.id}`)}
     />
   );
 
@@ -88,4 +88,3 @@ export default function Index() {
     </View>
   );
 }
-

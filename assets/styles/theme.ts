@@ -1,5 +1,5 @@
 // constants/theme.ts
-import { TextStyle, ViewStyle } from 'react-native';
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 export const colors = {
   // Primary colors
@@ -171,3 +171,13 @@ export const commonStyles: Record<string, ViewStyle> = {
 // Type exports for better autocomplete
 export type Colors = typeof colors;
 export type Spacing = typeof spacing;
+
+export const buttonStyles = StyleSheet.create({
+  actionButton: {
+    flex: 1,
+    borderRadius: 8,
+  },
+  actionButtonContent: {
+    height: 56,
+  },
+});
