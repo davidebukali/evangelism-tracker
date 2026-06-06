@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function Tab() {
   return (
     <View style={styles.container}>
-      <Text>v 1.0.0</Text>
+      <Text>v 1.0.1</Text>
     </View>
   );
 }
