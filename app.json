@@ -22,7 +22,9 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "READ_CALL_LOG"
+        "READ_CALL_LOG",
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
       ],
       "package": "com.debukali.evangelismtracker"
     },
@@ -37,10 +39,11 @@
         {
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "resizeMode": "cover",
+          "backgroundColor": "#0d1b3e",
+          "enableFullScreenImage_legacy": true,
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#0d1b3e"
           }
         }
       ],
@@ -55,6 +58,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a96db647-8e69-4465-9d0a-e2ceee18349b"
+      }
     }
   }
 }
