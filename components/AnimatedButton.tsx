@@ -1,6 +1,10 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { AnimatedFAB, type AnimatedFABAnimateFrom } from 'react-native-paper';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { Icon } from 'react-native-paper';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AnimatedButtonProps = {
@@ -8,7 +12,6 @@ type AnimatedButtonProps = {
   icon?: string;
   onPress?: () => void;
   visible?: boolean;
-  animateFrom?: AnimatedFABAnimateFrom;
   initialExtended: boolean;
 };
 
@@ -17,36 +20,71 @@ const AnimatedButton = ({
   icon = 'plus',
   onPress,
   visible = true,
-  animateFrom = 'right',
   initialExtended,
 }: AnimatedButtonProps) => {
   const insets = useSafeAreaInsets();
 
-  const handlePress = () => {
-    onPress?.();
-  };
+  const containerStyle = useAnimatedStyle(() => ({
+    width: withTiming(initialExtended ? 170 : 56, {
+      duration: 250,
+    }),
+  }));
+
+  const labelStyle = useAnimatedStyle(() => ({
+    width: withTiming(initialExtended ? 100 : 0, {
+      duration: 250,
+    }),
+  }));
+
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <AnimatedFAB
-      icon={icon}
-      label={label}
-      extended={initialExtended}
-      visible={visible}
-      animateFrom={animateFrom}
-      iconMode="static"
-      onPress={handlePress}
+    <Animated.View
       style={[
-        styles.fab,
-        { bottom: insets.bottom + 16, [animateFrom]: 16 },
+        styles.container,
+        { bottom: insets.bottom + 16 },
+        containerStyle,
       ]}
-    />
+    >
+      <Pressable style={styles.button} onPress={onPress}>
+        <Icon source={icon} size={24} color="#FFFFFF"/>
+
+        <Animated.View style={[styles.labelContainer, labelStyle]}>
+          <Text numberOfLines={1} style={styles.label}>
+            {label}
+          </Text>
+        </Animated.View>
+      </Pressable>
+    </Animated.View>
   );
 };
 
 export default AnimatedButton;
 
 const styles = StyleSheet.create({
-  fab: {
+  container: {
     position: 'absolute',
+    right: 16,
+    height: 56,
+  },
+  button: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    backgroundColor: '#6750A4',
+    overflow: 'hidden',
+  },
+  labelContainer: {
+    overflow: 'hidden',
+    marginLeft: 12,
+  },
+  label: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
