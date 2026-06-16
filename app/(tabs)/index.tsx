@@ -83,6 +83,12 @@ export default function Index() {
             placeholder="Search contacts..."
             onChangeText={setQuery}
             value={query}
+            style={{ 
+              backgroundColor: '#ffffff',
+              borderWidth: 1,
+              borderColor: '#D0D0D0',
+              borderRadius: 8,
+            }}
           />
         }
       />
