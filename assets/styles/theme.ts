@@ -108,6 +108,7 @@ export const typography: Record<string, TextStyle> = {
   
   // Label styles
   labelLarge: {
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20,
@@ -180,4 +181,13 @@ export const buttonStyles = StyleSheet.create({
   actionButtonContent: {
     height: 56,
   },
+  animatedButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    backgroundColor: '#6750A4',
+    overflow: 'hidden',
+  },  
 });

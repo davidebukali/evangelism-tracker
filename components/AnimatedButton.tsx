@@ -1,3 +1,4 @@
+import { buttonStyles, typography } from '@/assets/styles/theme';
 import React from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { Icon } from 'react-native-paper';
@@ -48,11 +49,11 @@ const AnimatedButton = ({
         containerStyle,
       ]}
     >
-      <Pressable style={styles.button} onPress={onPress}>
+      <Pressable style={buttonStyles.animatedButton} onPress={onPress}>
         <Icon source={icon} size={24} color="#FFFFFF"/>
 
         <Animated.View style={[styles.labelContainer, labelStyle]}>
-          <Text numberOfLines={1} style={styles.label}>
+          <Text numberOfLines={1} style={typography.labelLarge}>
             {label}
           </Text>
         </Animated.View>
@@ -69,22 +70,8 @@ const styles = StyleSheet.create({
     right: 16,
     height: 56,
   },
-  button: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    borderRadius: 16,
-    backgroundColor: '#6750A4',
-    overflow: 'hidden',
-  },
   labelContainer: {
     overflow: 'hidden',
     marginLeft: 12,
-  },
-  label: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
   },
 });

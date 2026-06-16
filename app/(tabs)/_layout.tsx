@@ -1,21 +1,19 @@
+import { colors } from '@/assets/styles/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-import { useTheme } from 'react-native-paper';
 
 export default function TabLayout() {
-  const theme = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarActiveTintColor: colors.primary,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Contacts',
+          title: 'Home',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
         }}
       />
