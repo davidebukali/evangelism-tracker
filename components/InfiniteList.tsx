@@ -39,7 +39,7 @@ export default function InfiniteList<T extends { id: string | number }>({
   };
 
   const renderEmpty = () => {
-    if (data.length === 0 && !isLoading) {
+    if (data.length === 0) {
       return (
         <View style={styles.emptyContainer}>
           {error ? (
@@ -58,7 +58,7 @@ export default function InfiniteList<T extends { id: string | number }>({
               )}
             </>
           ) : (
-            <Text variant="bodyMedium">{emptyText}</Text>
+            <Text variant="titleMedium" style={{color: colors.outline}}>{emptyText}</Text>
           )}
         </View>
       );
