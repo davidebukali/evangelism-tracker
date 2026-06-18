@@ -2,7 +2,7 @@
   "expo": {
     "name": "Emmaus",
     "slug": "evangelism-tracker",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "evangelismtracker",
@@ -26,7 +26,8 @@
         "android.permission.READ_CONTACTS",
         "android.permission.WRITE_CONTACTS"
       ],
-      "package": "com.debukali.evangelismtracker"
+      "package": "com.debukali.evangelismtracker",
+      "versionCode": 3
     },
     "web": {
       "output": "static",
