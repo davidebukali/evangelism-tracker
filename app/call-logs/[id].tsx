@@ -76,7 +76,7 @@ export default function ContactCallLogsScreen() {
         error={error}
         onRetry={needsSettings ? openPermissionSettings : refetch}
         retryLabel={needsSettings ? 'Open Settings' : 'Retry'}
-        emptyText="No outgoing calls found for this contact"
+        emptyText="No outgoing calls"
         ListHeaderComponent={
           <View style={styles.header}>
             <Text variant="titleMedium" style={{color: colors.textPrimary}}>{contactName ?? 'Call history'}</Text>

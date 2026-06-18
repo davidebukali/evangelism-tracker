@@ -53,7 +53,8 @@
           "contactsPermission": "Allow Evangelism Tracker to access your contacts."
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "./plugins/withCmakeStagingDir"
     ],
     "experiments": {
       "typedRoutes": true,
