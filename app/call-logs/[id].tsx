@@ -2,10 +2,10 @@ import { buttonStyles, colors, commonStyles, spacing } from '@/assets/styles/the
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
 import { useLocalSearchParams } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Alert, Linking, StyleSheet, View } from 'react-native';
 import type { CallLog } from 'react-native-call-log';
-import { Button, List, Text } from 'react-native-paper';
+import { Avatar, Button, List, Text } from 'react-native-paper';
 
 function formatDuration(duration: number) {
   const minutes = Math.floor(duration / 60);
@@ -26,6 +26,14 @@ export default function ContactCallLogsScreen() {
   }>();
 
   const contactName = Array.isArray(name) ? name[0] : name;
+
+  const initials = useMemo(() => {
+    if (!contactName) return '';
+    const nameParts = contactName.split(' ');
+    if (nameParts.length === 1) return nameParts[0].charAt(0);
+    return nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0);
+  }, [contactName]);
+
   const selectedPhoneNumber = Array.isArray(phoneNumber) ? phoneNumber[0] : phoneNumber;
   const {
     data,
@@ -79,7 +87,14 @@ export default function ContactCallLogsScreen() {
         emptyText="No outgoing calls"
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text variant="titleMedium" style={{color: colors.textPrimary}}>{contactName ?? 'Call history'}</Text>
+            {contactName ? (
+              <View style={styles.profile}>
+                      <Avatar.Text size={112} label={initials.toUpperCase()} />
+                      <Text variant="headlineSmall" style={{color: colors.textPrimary, marginTop: spacing.md}}>
+                        {contactName}
+                      </Text>
+              </View>
+            ) : null}
             {selectedPhoneNumber ? (
               <Text variant="bodyMedium" style={styles.phone}>
                 {selectedPhoneNumber}
@@ -88,7 +103,7 @@ export default function ContactCallLogsScreen() {
             <Button
               mode="contained"
               icon="phone"
-              style={buttonStyles.formButton}
+              style={buttonStyles.button}
               textColor={colors.onPrimary}
               contentStyle={buttonStyles.actionButtonContent}
               disabled={!selectedPhoneNumber}
@@ -110,6 +125,11 @@ const styles = StyleSheet.create({
   phone: {
     marginTop: spacing.xs,
     marginBottom: spacing.md,
-    color: colors.textPrimary
+    color: colors.textPrimary,
+    alignItems: 'center',
   },
+  profile: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+  }
 });
