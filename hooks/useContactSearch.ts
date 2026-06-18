@@ -1,11 +1,9 @@
-import { getContactsModule } from '@/lib/contacts';
+import useDatabase from '@/hooks/useDatabase';
 import { PhoneContact } from '@/types/models';
 import { useEffect, useState } from 'react';
 
-const NATIVE_MODULE_MESSAGE =
-  'Contacts native module is missing. Rebuild the app with: npx expo run:android';
-
 export default function useContactSearch(query: string) {
+  const { searchContacts } = useDatabase();
   const [data, setData] = useState<PhoneContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,35 +22,21 @@ export default function useContactSearch(query: string) {
       setError(null);
 
       try {
-        const Contacts = await getContactsModule();
-        const fields = [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers] as const;
-
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status !== 'granted') {
-          if (isMounted) setError('Contacts permission is required');
-          return;
-        }
-
-        const { data: searchResults } = await Contacts.getContactsAsync({
-          fields: [...fields],
-          name: query.trim(), 
-        });
+        const searchResults = await searchContacts(query);
 
         if (isMounted) {
           const newItems: PhoneContact[] = searchResults.map((contact) => ({
-            id: contact.id ?? '',
-            name: contact.name,
-            phone: contact.phoneNumbers?.[0]?.number ?? '',
-            photo: contact.image?.uri ?? null,
+            id: contact.device_contact_id ?? String(contact.id),
+            name: `${contact.first_name} ${contact.last_name}`.trim(),
+            phone: contact.phone,
+            photo: null,
           }));
           setData(newItems);
         }
       } catch (err) {
         if (isMounted) {
           const message = err instanceof Error ? err.message : 'An error occurred';
-          setError(
-            message.includes('ExpoContacts') ? NATIVE_MODULE_MESSAGE : message
-          );
+          setError(message);
         }
       } finally {
         if (isMounted) {
@@ -66,7 +50,7 @@ export default function useContactSearch(query: string) {
     return () => {
       isMounted = false;
     };
-  }, [query]);
+  }, [query, searchContacts]);
 
   return { data, isLoading, error };
 }

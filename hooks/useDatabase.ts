@@ -103,11 +103,34 @@ export default function useDatabase() {
     [db]
   );
 
+  const searchContacts = useCallback(
+    async (query: string) => {
+      try {
+        const searchPattern = `%${query}%`;
+        const rows = await db.getAllAsync<DatabaseContact>(
+          `SELECT * FROM contacts 
+           WHERE first_name LIKE ? 
+              OR last_name LIKE ? 
+              OR (first_name || ' ' || last_name) LIKE ? 
+              OR phone LIKE ? 
+           ORDER BY created_at DESC`,
+          [searchPattern, searchPattern, searchPattern, searchPattern]
+        );
+        return rows;
+      } catch (error) {
+        console.error('Error searching contacts in db:', error);
+        throw error;
+      }
+    },
+    [db]
+  );
+
   return {
     addContact,
     getContacts,
     getContactByDeviceId,
     updateContact,
     deleteContact,
+    searchContacts,
   };
 }
