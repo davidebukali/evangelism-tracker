@@ -1,4 +1,4 @@
-import { buttonStyles, colors, commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, colors, commonStyles, spacing, typography } from '@/assets/styles/theme';
 import useDatabase, { DatabaseContact } from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -167,7 +167,7 @@ export default function ViewContact() {
           {contact.name}
         </Text>
         {/* Add reached date, human readable when the contact was saved */}
-        <Text variant="bodyMedium">
+        <Text variant="bodyMedium" style={{ color: colors.textSecondary }}>
           Reached: {new Date(contact.created_at).toDateString()}
         </Text>
       </View>
@@ -176,14 +176,18 @@ export default function ViewContact() {
 
       <View style={styles.details}>
         <List.Item
-          title={contact.phone || 'No phone number'}
-          description="Mobile"
-          left={(props) => <List.Icon {...props} icon="phone-outline" />}
+          title="Mobile"
+          description={contact.phone || 'No phone number'}
+          titleStyle={{ color: colors.textPrimary }}
+          descriptionStyle={{ color: colors.textSecondary }}
+          left={(props) => <List.Icon {...props} icon="phone-outline" color={colors.textSecondary} />}
         />
         <List.Item
-          title={contact.notes || 'No notes'}
-          description="Note"
-          left={(props) => <List.Icon {...props} icon="message-text-outline" />}
+          title="Note"
+          description={contact.notes || 'No notes'}
+          titleStyle={{ color: colors.textPrimary }}
+          descriptionStyle={{ color: colors.textSecondary }}
+          left={(props) => <List.Icon {...props} icon="message-text-outline" color={colors.textSecondary} />}
         />
       </View>
 
@@ -205,10 +209,11 @@ export default function ViewContact() {
             icon="phone"
             disabled={!contact.phone}
             onPress={handleCall}
-            style={[buttonStyles.actionButton, styles.callButton]}
+            textColor={colors.onPrimary}
+            style={[buttonStyles.button, styles.callButton]}
             contentStyle={buttonStyles.actionButtonContent}
           >
-            Call
+            <Text variant="bodyMedium" style={typography.labelLarge}>Call</Text>
           </Button>
         </View>
 
@@ -249,6 +254,7 @@ const styles = StyleSheet.create({
   name: {
     marginTop: spacing.md,
     textAlign: 'center',
+    color: colors.textPrimary,
   },
   details: {
     paddingVertical: spacing.md,

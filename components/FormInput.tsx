@@ -1,8 +1,8 @@
+import { colors, inputStyles, spacing } from '@/assets/styles/theme';
 import React from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, TextInputProps } from 'react-native-paper';
-import { colors, spacing } from '@/assets/styles/theme';
 
 interface FormInputProps<T extends FieldValues> extends Omit<TextInputProps, 'error'> {
   control: Control<T>;
@@ -33,7 +33,9 @@ export function FormInput<T extends FieldValues>({
             onChangeText={onChange}
             value={value}
             error={!!error}
-            style={styles.input}
+            textColor={colors.textPrimary}
+            placeholderTextColor={colors.textSecondary}
+            style={inputStyles.textInput}
             {...props}
           />
         )}
@@ -46,9 +48,6 @@ export function FormInput<T extends FieldValues>({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 0, // spacing is handled by formContainer gap
-  },
-  input: {
-    backgroundColor: 'transparent',
   },
   errorText: {
     color: colors.error,

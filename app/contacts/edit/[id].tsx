@@ -1,11 +1,11 @@
-import { buttonStyles, commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, commonStyles, spacing, typography } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
 import useDatabase from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button } from 'react-native-paper';
 
 interface EditContactForm {
@@ -178,10 +178,12 @@ export default function EditContact() {
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={isSubmitting}
-          style={buttonStyles.actionButton}
+          style={buttonStyles.formButton}
           contentStyle={buttonStyles.actionButtonContent}
-        >
-          {isSubmitting ? 'Saving...' : 'Save'}
+        >          
+          <Text numberOfLines={1} style={typography.labelLarge}>
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Text>
         </Button>
       </View>
     </ScrollView>

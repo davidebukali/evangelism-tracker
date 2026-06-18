@@ -33,6 +33,10 @@ export const colors = {
   // Outline colors
   outline: '#79747E',
   outlineVariant: '#CAC4D0',
+
+  textPrimary: '#1C1B1F',
+  textSecondary: '#49454F',
+  textDisabled: '#CAC4D0',
   
 } as const;
 
@@ -166,7 +170,7 @@ export const commonStyles: Record<string, ViewStyle> = {
   center: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
+  }  
 };
 
 // Type exports for better autocomplete
@@ -181,6 +185,22 @@ export const buttonStyles = StyleSheet.create({
   actionButtonContent: {
     height: 56,
   },
+  formButton: {
+    color: "white",
+    marginTop: spacing.lg,
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#6750A4',
+  },
+  button: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: '#6750A4',
+  },
   animatedButton: {
     flex: 1,
     flexDirection: 'row',
@@ -189,5 +209,18 @@ export const buttonStyles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#6750A4',
     overflow: 'hidden',
-  },  
+  },
+});
+
+
+export const inputStyles = StyleSheet.create({
+  searchBar: { 
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+    borderRadius: 8,
+  },
+  textInput: { 
+    backgroundColor: '#ffffff',
+  },
 });

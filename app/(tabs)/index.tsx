@@ -1,4 +1,4 @@
-import { commonStyles } from '@/assets/styles/theme';
+import { colors, commonStyles, inputStyles } from '@/assets/styles/theme';
 import AnimatedButton from '@/components/AnimatedButton';
 import InfiniteList from '@/components/InfiniteList';
 import useContactList from '@/hooks/useContactList';
@@ -62,6 +62,8 @@ export default function Index() {
         }
         right={(props) => <List.Icon {...props} icon="chevron-right" />}
         onPress={() => router.push(`/contacts/view/${item.id}`)}
+        titleStyle={{ color: colors.textPrimary }}
+        descriptionStyle={{ color: colors.textSecondary }}
       />
     );
   }
@@ -80,15 +82,12 @@ export default function Index() {
         emptyText={isSearching ? 'No contacts match your search' : 'No contacts to display'}
         ListHeaderComponent={
           <Searchbar
-            placeholder="Search contacts..."
+            placeholder="Search contacts ..."
             onChangeText={setQuery}
             value={query}
-            style={{ 
-              backgroundColor: '#ffffff',
-              borderWidth: 1,
-              borderColor: '#D0D0D0',
-              borderRadius: 8,
-            }}
+            style={inputStyles.searchBar}
+            inputStyle={{ color: colors.textPrimary }}
+            placeholderTextColor={colors.textSecondary}
           />
         }
       />

@@ -1,11 +1,11 @@
-import { commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, commonStyles, spacing, typography } from '@/assets/styles/theme';
 import { FormInput } from '@/components/FormInput';
 import useDatabase from '@/hooks/useDatabase';
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 interface CreateContactForm {
@@ -124,10 +124,12 @@ export default function CreateContact() {
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={isSubmitting}
-          style={styles.button}
+          style={buttonStyles.formButton}
           contentStyle={styles.buttonContent}
         >
-          {isSubmitting ? 'Saving...' : 'Save Contact'}
+          <Text numberOfLines={1} style={typography.labelLarge}>
+            {isSubmitting ? 'Saving...' : 'Save Contact'}
+          </Text>
         </Button>
       </View>
     </ScrollView>
@@ -141,12 +143,9 @@ const styles = StyleSheet.create({
   formContainer: {
     gap: spacing.md,
   },
-  button: {
-    marginTop: spacing.lg,
-    borderRadius: 8,
-  },
   buttonContent: {
     paddingVertical: spacing.xs,
+    color: 'white'
   },
 });
 
