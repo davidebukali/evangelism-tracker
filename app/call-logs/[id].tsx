@@ -1,4 +1,4 @@
-import { buttonStyles, commonStyles, spacing } from '@/assets/styles/theme';
+import { buttonStyles, colors, commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { useContactCallLogs } from '@/hooks/useCallLogs';
 import { useLocalSearchParams } from 'expo-router';
@@ -53,7 +53,13 @@ export default function ContactCallLogsScreen() {
   const renderCallLog = (item: CallLog) => (
     <List.Item
       title={item.dateTime}
+      titleStyle={{
+        color: colors.textPrimary
+      }}
       description={`Duration ${formatDuration(Number(item.duration) || 0)}`}
+      descriptionStyle={{
+        color: colors.textSecondary
+      }}
       left={(props) => <List.Icon {...props} icon="phone-outgoing" />}
     />
   );
@@ -73,7 +79,7 @@ export default function ContactCallLogsScreen() {
         emptyText="No outgoing calls found for this contact"
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text variant="titleMedium">{contactName ?? 'Call history'}</Text>
+            <Text variant="titleMedium" style={{color: colors.textPrimary}}>{contactName ?? 'Call history'}</Text>
             {selectedPhoneNumber ? (
               <Text variant="bodyMedium" style={styles.phone}>
                 {selectedPhoneNumber}
@@ -82,7 +88,8 @@ export default function ContactCallLogsScreen() {
             <Button
               mode="contained"
               icon="phone"
-              style={buttonStyles.actionButton}
+              style={buttonStyles.formButton}
+              textColor={colors.onPrimary}
               contentStyle={buttonStyles.actionButtonContent}
               disabled={!selectedPhoneNumber}
               onPress={handleCallNow}
@@ -103,5 +110,6 @@ const styles = StyleSheet.create({
   phone: {
     marginTop: spacing.xs,
     marginBottom: spacing.md,
+    color: colors.textPrimary
   },
 });

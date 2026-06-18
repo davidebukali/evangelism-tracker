@@ -1,4 +1,4 @@
-import { commonStyles, spacing } from '@/assets/styles/theme';
+import { colors, commonStyles, spacing } from '@/assets/styles/theme';
 import InfiniteList from '@/components/InfiniteList';
 import { ContactCallLogSummary, useCallLogContacts } from '@/hooks/useCallLogs';
 import { router, useFocusEffect } from 'expo-router';
@@ -27,11 +27,17 @@ export default function CallLogs() {
     <List.Item
       title={item.name}
       description={item.mostRecentDateTime || item.phone}
-      left={(props) => <List.Icon {...props} icon="phone-outgoing" />}
+      titleStyle={{
+        color: colors.textPrimary
+      }}
+      descriptionStyle={{
+        color: colors.textSecondary
+      }}
+      left={(props) => <List.Icon {...props} icon="phone-outgoing" color={colors.textSecondary} />}
       right={() => (
         <View style={styles.trailing}>
           <Badge size={24}>{item.callCount}</Badge>
-          <List.Icon icon="chevron-right" />
+          <List.Icon icon="chevron-right" color={colors.textSecondary} />
         </View>
       )}
       onPress={() =>
