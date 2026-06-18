@@ -188,16 +188,12 @@ export const buttonStyles = StyleSheet.create({
   formButton: {
     color: "white",
     marginTop: spacing.lg,
-    alignItems: 'center',
-    paddingHorizontal: 10,
     borderRadius: 8,
     backgroundColor: '#6750A4',
   },
   button: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
     borderRadius: 8,
     backgroundColor: '#6750A4',
   },

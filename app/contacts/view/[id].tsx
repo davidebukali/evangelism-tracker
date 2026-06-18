@@ -210,10 +210,11 @@ export default function ViewContact() {
             disabled={!contact.phone}
             onPress={handleCall}
             textColor={colors.onPrimary}
-            style={[buttonStyles.button, styles.callButton]}
+            style={buttonStyles.actionButton}
             contentStyle={buttonStyles.actionButtonContent}
+            labelStyle={typography.labelLarge}
           >
-            <Text variant="bodyMedium" style={typography.labelLarge}>Call</Text>
+            Call
           </Button>
         </View>
 

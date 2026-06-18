@@ -5,7 +5,7 @@ import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 interface CreateContactForm {
@@ -126,10 +126,9 @@ export default function CreateContact() {
           disabled={isSubmitting}
           style={buttonStyles.formButton}
           contentStyle={styles.buttonContent}
+          labelStyle={typography.labelLarge}
         >
-          <Text numberOfLines={1} style={typography.labelLarge}>
-            {isSubmitting ? 'Saving...' : 'Save Contact'}
-          </Text>
+          {isSubmitting ? 'Saving...' : 'Save Contact'}
         </Button>
       </View>
     </ScrollView>
